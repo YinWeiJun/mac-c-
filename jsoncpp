@@ -1,0 +1,16 @@
+1、升级g++支持c++11 （gcc version 4.8.3）
+    参照 手动安装gcc-4.8.3
+注意软连接
+2、升级CMake (cmake version 3.10.0-rc4)
+    ./bootstrap
+    make
+    make install
+    (注：make install 一步是可选的，CMake 可以在编译目录下运行。
+3、下载解压 jsoncpp-1.8.3
+进入解压目录
+ -DCMAKE_INSTALL_PREFIX=/home/xiaoju/dipper/cpp/jsoncpp-1.8.3 
+cmake -DCMAKE_BUILD_TYPE=release -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=ON -DARCHIVE_INSTALL_DIR=. -G "Unix Makefiles"
+make
+make install
+
+OK
