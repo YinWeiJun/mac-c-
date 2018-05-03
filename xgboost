@@ -1,0 +1,46 @@
+2. 从Github库下载最新版XGBoost安装
+第一步：克隆最新的XGBoost到本地
+git clone --recursive https://github.com/dmlc/xgboost 
+第二步：安装gcc
+brew install gcc7 --without-multilib 
+第三步：修改XGBoost的config文件
+cd xgboost
+cp make/config.mk ./config.mk 
+很多攻略都是直接将以下这两行
+# export CC = gcc # export CXX = g++ 
+改为：
+export CC = gcc-7 export CXX = g++-7 
+但是我直接这样做却一直报错，无法编译通过。搞了半天才发现系统找不到gcc,原来是macOS已经不自带gcc环境了，通过Homebrew安装系统也识别不到。
+正常情况下是可以通过port来查看系统里安装的gcc的：
+安装gcc_select
+/opt/local/bin/port install gcc_select
+查看gcc列表
+port select --list gcc
+还可以选择gcc的版本
+sudo port select --set gcc mp-gcc7 
+但是很不幸，我执行port select --list gcc得到的结果是
+Available versions for gcc:
+none (active)
+但是明明Homebrew安装成功了啊，于是到Homebrew的安装目录下瞧一瞧：cd /usr/local/bin，发现里面静静躺着gcc5,gcc7，系统就是无法识别这里的gcc。。。搜了半天没找到解决方案，
+最后，机智的我直接把config.mk修改成：
+export CC = /usr/local/bin/gcc-7 
+export CXX = /usr/local/bin/g++-7
+export MPICXX = /usr/local/bin/mpicxx 
+
+就是带上具体的路径，然后保存
+第四步：开始编译
+make clean_all && make -j4 
+第五步：安装python包
+cd python-package
+python setup.py install 
+至些XGBoost终于安装成功！
+在python环境中测试一下：
+import xgboost
+xgboost.__version__ 
+输出'0.6'
+
+注意：
+1、dyld: Library not loaded: lib/libxgboost.dylib
+解决方法：ln -s /usr/local/xgboost/lib/libxgboost.dylib /usr/local/lib/libxgboost.dylib
+
+参考 https://www.jianshu.com/p/c2b0c3067d84
